@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta name="referrer" content="no-referrer">
+	<meta charset="UTF-8">
+	<title>PAN · RAWCHEN</title>
+	<link rel="shortcut icon" href="static/img/favicon-9fc0f85f45b2813561cd87257d9584e1.ico">
+	<link rel="apple-touch-icon" href="static/img/favicon-9fc0f85f45b2813561cd87257d9584e1.ico">
+	<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+	<script src="static/js/ionicons.js"></script>
+	<script src="static/js/marked.min-09a652b6eba98e3cc57532af6351a7fe.js"></script>
+	<script src="static/js/highlight.min-e725c3aee301dbe6d0f414f23aa1fbf7.js"></script>
+	<script src="static/js/aliyun-web-office-sdk.min-cda19b5ffc2d88afae747efa3659e1d2.js"></script>
+	<script src="static/js/jquery.min-0744694c4fa1a5b34f3f8bb8a00bf954.js"></script>
+	<script src="static/layer/layer-e710aaba7133d392c3ae01bdcc36451d.js"></script>
+	<script src="static/js/highlightjs-line-numbers.min-9331fb0e5f53e0afeedb8565a041aa45.js"></script>
+	<script src="static/js/uikit.min-3432b1e417d38f36cb7f58e287e53e90.js"></script>
+	<script src="static/js/top-script-f4a0d605530e94e60517550532b92808.js"></script>
+	<link href="static/css/monokai-sublime.min-d4dffcdfd2a50d109714ce79fb395350.css" rel="stylesheet"/>
+	<link href="static/css/github-markdown.min-4327c9a4f29a015bef7aa54dcbe737ea.css" rel="stylesheet"/>
+	<link href="static/css/uikit.min-07474f52f296f21349a3e29e8d7d82e4.css" rel="stylesheet"/>
+	<link href="static/css/top-style-8e8b78a810578ca394c716dac941799b.css" rel="stylesheet"/>
+	<link href="static/css/mystyle-e0f88ef595a2a17d22fa31c915f999a7.css" rel="stylesheet"/>
+	<script async defer data-website-id="da900d64-d5d3-4b0f-a9b0-f57f3867c324" src="static/js/umami.js"></script>
+<!--	<script src="https://s0.pstatp.com/cdn/expire-1-M/fancybox/3.5.7/jquery.fancybox.min.js"></script>-->
+<!--	<link href="https://s0.pstatp.com/cdn/expire-1-M/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet"/>-->
+</head>
+<body>
+
+<template id="tree-node-wrapper-template">
+	<div class="tree-node-wrapper">
+		<div class="tree-node">
+			<ion-icon></ion-icon>
+			<ion-icon></ion-icon>
+			<div class="tree-node-name"></div>
+		</div>
+	</div>
+</template>
+<template id="file-wrapper-templete">
+	<div class="row file-wrapper">
+		<div class="file">
+			<ion-icon></ion-icon>
+			<span class="name"></span>
+			<span class="time"></span>
+			<span class="size"></span>
+		</div>
+	</div>
+</template>
+
+
+<div class="header-wrapper">
+	<div class="header">
+		<ion-icon id="arrow-back" class="logo" name="arrow-back"></ion-icon>
+		<ion-icon id="main-page" class="logo" name="home"></ion-icon>
+		<ion-icon id="thumbnail-toggle" class="logo" name="more"></ion-icon>
+		<div class="loading-wrapper">
+			 <div class="loading">
+				<div class="pswp__preloader__icn">
+					<div class="pswp__preloader__cut">
+						<div class="pswp__preloader__donut">
+						</div>
+					</div>
+				</div>
+			 </div>
+		</div>
+		<a class="site" id="nav-site" href="javascript:void(0);" onclick="domain_index()" title="刷新">AliPan</a>
+		<a class="site" id="git-branch-a" target="_black" href="https://github.com/rawchen/AliPan"
+		   title="你也想要属于自己的云盘？">
+			<ion-icon id="git-branch" name="git-branch" class="logo"></ion-icon>
+		</a>
+
+	</div>
+</div>
+<div class="container">
+	<div class="main">
+		<div class="left">
+			<div id="tree-root">
+			</div>
+		</div>
+		<div class="right">
+			<div class="list-header">
+				<div class="row" style="border-bottom:solid rgb(123 183 255) 3px;font-weight:700;">
+					<div class="file">
+						<span class="name">ITEMS</span>
+						<span class="time">TIME</span>
+						<span class="size">SIZE</span>
+					</div>
+				</div>
+			</div>
+			<div id="file-list">
+			</div>
+			<div class="markdown-body">
+				<div id="readme">
+				</div>
+			</div>
+			<div class="preview">
+				<div class="info">
+					<div class="file-name"></div>
+					<div class="btn download">下载</div>
+					<div class="btn thunder" id="thunder">迅雷</div>
+					<div class="btn share">分享</div>
+					<div class="btn potplayer" id="potplayer">PotPlayer</div>
+				</div>
+				<div class="content"></div>
+			</div>
+			<div class="password-wrapper">
+				<div class="password">
+					<input type="password">
+					<button id="submit-password">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="contextmenu" id="context">
+	<ul id="contextmenu-ul">
+		<li>
+			<a id="open" href="javascript:;">
+				<ion-icon name="share-alt" style="color: #f96f6f;"></ion-icon>
+				打开
+
+			</a>
+		</li>
+		<li>
+			<a id="share" href="javascript:;">
+				<ion-icon name="share" style="color: #458fff;"></ion-icon>
+				分享
+			</a>
+		</li>
+		<li>
+			<a id="download" href="javascript:;">
+				<ion-icon name="download" style="color: #ff9445;"></ion-icon>
+				下载
+			</a>
+		</li>
+	</ul>
+</div>
+<a href="" class="cd-top">Top</a>
+</body>
+<script>
+	//记录全局的文件fileId
+	let fullFileId = '';
+	let fullFileIdArr = [];
+	let watchFileState = false;
+
+	let loading = document.querySelector('.loading');
+
+	$right = $('.right');
+
+	document.addEventListener("keydown", function(e) {
+		if (e.target !== document.getElementsByTagName('body')[0]) return;
+		if (event.keyCode === 8) {
+			back();
+		}
+	});
+
+	if (window.localStorage.getItem("thumbnailState") === "1") {
+		document.getElementById('thumbnail-toggle').setAttribute("name", "more");
+	} else if (window.localStorage.getItem("thumbnailState") === "0") {
+		document.getElementById('thumbnail-toggle').setAttribute("name", "apps");
+	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		document.getElementById('arrow-back').style.color = '#818181';
+		if ("folder" === "folder") {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "getFolder/" + "root",
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (files) {
+					if (window.localStorage.getItem("thumbnailState") === "1") {
+						document.querySelector('.list-header').style.display = "none";
+						document.querySelector('#file-list').classList.add("thumbnail");
+					} else if (window.localStorage.getItem("thumbnailState") === "0") {
+						document.querySelector('#file-list').classList.remove("thumbnail");
+					}
+
+					if (window.location.href.indexOf("/folder/") >= 0) {
+						dealFiles(files, "root", false);
+					} else {
+						renderFileList(files);
+						fullFileId = 'root';
+						fullFileIdArr.push('root');
+						renderTreeNode(files);
+					}
+				}
+			});
+		} else {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "/getFile/" + "root",
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (file) {
+					dealFile("root", file.url, formatSize(file.size), file.name);
+				}
+			});
+		}
+
+		document.getElementById('arrow-back').addEventListener('click', back);
+		// document.getElementById('arrow-forward').addEventListener('click', forward);
+		document.querySelector('#main-page').addEventListener('click', () => {
+			location.href = document.location.protocol + "//" + window.location.host;
+		});
+
+		document.querySelector('#thumbnail-toggle').addEventListener('click', () => {
+			const timeClass = document.getElementsByClassName("time");
+			const fileWrapper = document.getElementsByClassName("row file-wrapper");
+			// 切换缩略图
+			if (document.getElementById('file-list').getAttribute("class") !== 'thumbnail') {
+				document.getElementById('thumbnail-toggle').setAttribute("name", "more");
+				document.querySelector('#file-list').classList.add("thumbnail");
+				window.localStorage.setItem("thumbnailState", "1");
+				for (let i = 0; i < timeClass.length; i++) {
+					timeClass[i].style.display = "none";
+				}
+				if (document.getElementById("file-list").style.display !== 'none') {
+					document.querySelector('.list-header').style.display = "none";
+				}
+				for (let i = 0; i < fileWrapper.length; i++) {
+					fileWrapper[i].setAttribute("uk-tooltip", "pos:right;offset:-20");
+					if (fileWrapper[i].style['backgroundImage'].indexOf("/img/type/") > -1) {
+						fileWrapper[i].style['backgroundSize'] = "";
+						fileWrapper[i].style['backgroundColor'] = "#5b6870";
+					} else {
+						fileWrapper[i].style['backgroundSize'] = "cover";
+						fileWrapper[i].style['backgroundColor'] = "";
+					}
+				}
+			} else {
+				// 列表
+				document.getElementById('thumbnail-toggle').setAttribute("name", "apps");
+				document.querySelector('#file-list').classList.remove("thumbnail");
+				window.localStorage.setItem("thumbnailState", "0");
+				if (document.body.clientWidth < 600) {
+					for (let i = 0; i < timeClass.length; i++) {
+						timeClass[i].style.display = "none";
+					}
+				} else {
+					for (let i = 0; i < timeClass.length; i++) {
+						timeClass[i].style.display = "block";
+					}
+				}
+				if (document.getElementById("file-list").style.display !== 'none') {
+					document.querySelector('.list-header').style.display = "block";
+				}
+				for (let i = 0; i < fileWrapper.length; i++) {
+					fileWrapper[i].style['backgroundSize'] = "contain";
+					fileWrapper[i].style['backgroundColor'] = "";
+					//名称提示
+					// fileWrapper[i].title = fileWrapper[i].getElementsByClassName("name")[0].innerHTML;
+					// fileWrapper[i].setAttribute("uk-tooltip", "pos:right;offset:-20");
+					fileWrapper[i].removeAttribute("uk-tooltip");
+				}
+			}
+		});
+
+		if (window.history && window.history.pushState) {
+			$(window).on('popstate', function () {
+				window.history.pushState('forward', null, '');
+				window.history.forward();
+				back();
+			});
+		}
+
+		//在IE中必须得有这两行
+		window.history.pushState('forward', null, '');
+		window.history.forward();
+
+		document.querySelector('#file-list').classList.add("thumbnail");
+		const fileWrapper = document.getElementsByClassName("row file-wrapper");
+
+		//如果没有状态或者是缩略状
+		if (window.localStorage.getItem("thumbnailState") === null || window.localStorage.getItem("thumbnailState") === "1") {
+			if (document.getElementById("file-list").style.display !== 'none') {
+				document.querySelector('.list-header').style.display = "none";
+			}
+			for (let i = 0; i < fileWrapper.length; i++) {
+				fileWrapper[i].style['backgroundSize'] = "cover";
+			}
+		} else {
+			//列表
+			for (let i = 0; i < fileWrapper.length; i++) {
+				fileWrapper[i].style['backgroundSize'] = "contain";
+			}
+		}
+		
+	});
+
+	function back() {
+		//如果域名中带有“/file/”则说明是分享的链接进来的，跳转首页
+		if (window.location.href.indexOf("/file/") >= 0) {
+			location.href = document.location.protocol + "//" + window.location.host;
+		}
+
+		if (fullFileIdArr.length === 1) {
+			if (watchFileState === false) {
+				document.getElementById('arrow-back').style.color = '#818181';
+				return;
+			}
+		}
+
+		// console.log(fullFileIdArr)//root
+		let parentFileId = '';
+		let fullFileIdLastSecond = fullFileIdArr[fullFileIdArr.length - 2];
+		if (typeof(fullFileIdLastSecond) === 'undefined') {
+			parentFileId = fullFileIdArr[0];
+		} else {
+			parentFileId = fullFileIdLastSecond;
+		}
+
+		//根据该文件夹或文件的fileId去请求parent再渲染列表
+		loading.style.display = 'initial';
+		$.ajax({
+			type: 'POST',
+			url: "/getFolder/" + parentFileId,
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			complete: function () {loading.style.display = 'none';},
+			success: function (files) {
+				dealFiles(files, parentFileId, true);
+			}
+		});
+		if (fullFileIdArr.length > 1) {
+			fullFileIdArr.pop();
+		}
+	}
+
+	function forward() {
+	}
+
+	function domain_index() {
+		location.reload();
+	}
+
+	function renderFileList(files) {
+		if (fullFileIdArr.length > 0) {
+			document.getElementById('arrow-back').style.color = '#545454';
+		}
+		watchFileState = false;
+
+		const createFileWrapper = (type, name, time, size, fileId, url, previewUrl) => {
+			let fileWrapper = document.getElementById('file-wrapper-templete').content.cloneNode(true);
+			fileWrapper.querySelector('ion-icon').setAttribute('name', type);
+			fileWrapper.querySelector('.name').innerHTML = name;
+			// fileWrapper.querySelector('.name').title = name;
+			fileWrapper.querySelector('.time').innerHTML = time;
+			fileWrapper.querySelector('.size').innerHTML = size;
+			addFileListLineListener(fileWrapper.querySelector('.row.file-wrapper'), fileId, size, name, url, previewUrl);
+			return fileWrapper;
+		};
+
+		let fileList = document.getElementById('file-list');
+		fileList.innerHTML = '';
+
+		document.getElementById('readme').innerHTML = '';
+		if (files === null) {
+			location.reload();
+		}
+		if (files.length === 0) {
+			layer.msg('文件夹空的哦', {icon: 3, closeBtn: 2});
+
+		}
+		files.forEach(file => {
+			if (file.type === 'file' && (file.name.toLowerCase() === "readme.md")) {
+				renderMarkdown(file.url, true);
+			}
+			if (file.name.toLowerCase() !== "readme.md" && file.name !== "password") {
+				fileList.appendChild(
+					createFileWrapper(
+						file.type === "folder" ? "folder" : "document",
+						file.name,
+						formatDate(file.createdAt),
+						file.size ? formatSize(file.size) : '未知',
+						file.fileId,
+						file.url,
+						file.previewUrl
+						// 'https://fastly.jsdelivr.net/gh/rawchen/JsDelivr/static/blog/mail.jpg'
+					)
+				);
+			}
+		});
+
+		// 缩略图
+		files.forEach(file => {
+			if (file.previewUrl !== null) {
+				let imgTemp = new Image();
+				imgTemp.src = file.previewUrl;
+			}
+		});
+
+		const timeClass = document.getElementsByClassName("time");
+		if (window.localStorage.getItem("thumbnailState") === null || window.localStorage.getItem("thumbnailState") === "1") {
+			for (let i = 0; i < timeClass.length; i++) {
+				timeClass[i].style.display = "none";
+			}
+		}
+
+		const fileWrapper = document.getElementsByClassName("row file-wrapper");
+		for (let i = 0; i < fileWrapper.length; i++) {
+			const fileName = fileWrapper[i].getElementsByClassName("name")[0].innerHTML;
+			//名称提示
+			fileWrapper[i].title = fileName;
+			if (document.getElementById('file-list').getAttribute("class") === 'thumbnail') {
+				fileWrapper[i].setAttribute("uk-tooltip", "pos:right;offset:-20");
+			}
+			// 文件图标
+			if (!fileWrapper[i].style['backgroundImage']) {
+				fileWrapper[i].style['backgroundImage']
+					= "url('" + document.location.protocol
+					+ "//" + window.location.host
+					+ '/static/img/type/' + getExtensionFileType(fileName) + '.png' +"')";
+				fileWrapper[i].style['backgroundRepeat'] = "no-repeat";
+				if (document.getElementById('file-list').getAttribute("class") === 'thumbnail') {
+					fileWrapper[i].style['backgroundColor'] = "#5b6870";
+				}
+				if (document.getElementById('file-list').getAttribute("class") === 'thumbnail') {
+					// fileWrapper[i].style['backgroundSize'] = "contain";
+				} else {
+					fileWrapper[i].style['backgroundSize'] = "contain";
+				}
+				fileWrapper[i].style['backgroundPosition'] = "center";
+			}
+			// 文件夹图标
+			if (fileWrapper[i].children[0].children[0].getAttribute("name") === 'folder') {
+				fileWrapper[i].style['backgroundImage'] = "url('" + document.location.protocol + "//" + window.location.host + '/static/img/folder.jpg' +"')";
+				fileWrapper[i].style['backgroundRepeat'] = "no-repeat";
+				if (document.getElementById('file-list').getAttribute("class") === 'thumbnail') {
+					fileWrapper[i].style['backgroundSize'] = "cover";
+				} else {
+					fileWrapper[i].style['backgroundSize'] = "contain";
+				}
+				fileWrapper[i].style['backgroundPosition'] = "center";
+			}
+
+		}
+	}
+
+	async function renderMarkdown(url, isReadMeMarkdown) {
+		const render = text => {
+			let markedText = marked(text, {
+				gfm: true,
+				highlight: code => {
+					return hljs.highlightAuto(code).value;
+				}
+			});
+			if (isReadMeMarkdown) {
+				document.getElementById('readme').innerHTML = markedText;
+				document.querySelector('.markdown-body').style.display = 'block';
+			} else {
+				let mdDiv = document.createElement("div");
+				mdDiv.classList.add("markdown-body");
+				mdDiv.innerHTML = markedText;
+				document.querySelector(".content").append(mdDiv);
+			}
+		};
+		$.ajax({
+			type: 'GET',
+			url: url,
+			success: function (data) {
+				render(data);
+			}
+		});
+	}
+
+	/**
+	 * 预览或处理文件
+	 * @param fileId
+	 * @param url
+	 * @param size
+	 * @param name
+	 */
+	function dealFile(fileId, url, size, name) {
+
+		//创建复制文本对象
+		const previewHandler = {
+			copyTextContent: (source, text) => {
+				let result = false;
+				let target = document.createElement('pre');
+				target.style.opacity = '0';
+				target.textContent = text || source.textContent;
+				document.body.appendChild(target);
+				try {
+					let range = document.createRange();
+					range.selectNode(target);
+					window.getSelection().removeAllRanges();
+					window.getSelection().addRange(range);
+					document.execCommand('copy');
+					window.getSelection().removeAllRanges();
+					result = true;
+				} catch (e) {
+				}
+				document.body.removeChild(target);
+				return result;
+			},
+			fileType: suffix => {
+				Array.prototype.contains = function (search) {
+					const object = this;
+					for (const key in object) {
+						if (object.hasOwnProperty(key)) {
+							if ((eval('/^' + search + '$/i')).test(object[key])) {
+								return true;
+							}
+						}
+					}
+					return false;
+				};
+				if (['bmp', 'jpg', 'jpeg', 'png', 'svg', 'webp', 'gif', 'ico', 'tif'].contains(suffix)) {
+					return 'image';
+				} else if (['mp3', 'flac', 'wav', 'ogg'].contains(suffix)) {
+					return 'audio';
+				} else if (['mp4', 'webm', 'avi', 'mkv', 'flv', 'm3u8', 'mov'].contains(suffix)) {
+					return 'video';
+				} else if (
+					[
+						'txt', 'js', 'json', 'css', 'htm', 'html', 'java', 'c', 'cpp',
+						'vue', 'py', 'h', 'hpp', 'gitignore', 'php', 'conf', 'ini',
+						'cmd', 'ps1', 'bat', 'sh', 'py', 'go', 'asp', 'reg', 'sql',
+						'properties', 'yml', 'xml', 'iml', 'groovy'
+					].contains(suffix)
+				) {
+					return 'text';
+				} else if (
+					['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'mpp', 'rtf', 'vsd', 'vsdx', 'csv'].contains(suffix)
+				) {
+					return 'office';
+				} else if (['md'].contains(suffix)) {
+					return 'markdown';
+				}
+			},
+			loadResource: (resource, callback) => {
+				let type;
+				switch (resource.split('.').pop()) {
+					case 'css':
+						type = 'link';
+						break;
+					case 'js':
+						type = 'script';
+						break;
+				}
+				let element = document.createElement(type);
+				let loaded = false;
+				if (typeof callback === 'function') {
+					element.onload = element.onreadystatechange = () => {
+						if (!loaded && (!element.readyState || /loaded|complete/.test(
+							element.readyState))) {
+							element.onload = element.onreadystatechange = null;
+							loaded = true;
+							callback();
+						}
+					}
+				}
+				if (type === 'link') {
+					element.href = resource;
+					element.rel = 'stylesheet';
+				} else {
+					element.src = resource;
+				}
+				document.getElementsByTagName('head')[0].appendChild(element);
+			},
+
+			createDplayer: (video, type, elem) => {
+				const host = 'https://s0.pstatp.com/cdn/expire-1-M';
+				const resources = [
+					'/dplayer/1.25.0/DPlayer.min.css',
+					'/dplayer/1.25.0/DPlayer.min.js',
+					'/hls.js/0.12.4/hls.light.min.js',
+					'/flv.js/1.5.0/flv.min.js'
+				];
+				let unloadedResourceCount = resources.length;
+				resources.forEach(resource => {
+					previewHandler.loadResource(host + resource, () => {
+						if (!--unloadedResourceCount) {
+							let option = {
+								url: video
+							}
+							if (type === 'flv') {
+								option.type = 'flv';
+							}
+							new DPlayer({
+								container: elem,
+								volume: 0.5,
+								screenshot: true,
+								video: option
+							});
+						}
+					})
+				});
+			}
+		}
+
+		let address;
+		if (url) {
+			address = document.location.protocol + "//" + window.location.host + "/file/" + fileId;
+		} else {
+			address = document.location.protocol + "//" + window.location.host + "/folder/" + fileId;
+		}
+		document.querySelector('.file-name').innerHTML = name;
+
+		document.querySelector('.btn.potplayer').onclick = () => {
+			loading.style.display = 'initial';
+			// $.ajax({
+			// 	type: 'POST',
+			// 	url: "/getDownloadUrl/" + fileId,
+			// 	headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			// 	complete: function () {loading.style.display = 'none';},
+			// 	success: function (file) {
+			// 		location.href = "potplayer://" + file.url;
+			// 	}
+			// });
+			location.href = "potplayer://" + document.location.protocol + "//" + window.location.host +  "/d/" + fileId;
+			loading.style.display = 'none';
+		}
+
+		document.querySelector('.btn.thunder').onclick = () => {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "/getDownloadUrl/" + fileId,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (file) {
+					location.href = "thunder://" + window.btoa('AA' + file.url + 'ZZ');
+				}
+			});
+		}
+
+		document.querySelector('.btn.download').onclick = () => {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "/getDownloadUrl/" + fileId,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (file) {
+					previewHandler.copyTextContent(null, file.url);
+					location.href = file.url;
+				}
+			});
+			const btn = document.querySelector('.btn.download');
+			btn.innerHTML = '已复制';
+			setTimeout(() => btn.innerHTML = '下载', 3000);
+		}
+		document.querySelector('.btn.share').onclick = () => {
+			previewHandler.copyTextContent(null, address);
+			const btn = document.querySelector('.btn.share');
+			btn.innerHTML = '已复制';
+			setTimeout(() => btn.innerHTML = '分享', 3000);
+		}
+		if (fullFileIdArr[fullFileIdArr.length - 1] !== fileId) {
+			fullFileIdArr.push(fileId);
+		}
+		document.getElementById('arrow-back').style.color = '#545454';
+		switchRightDisplay('preview');
+		watchFileState = true;
+
+		const suffix = name.split('.').pop();
+		let content = document.querySelector('.content');
+		let contentType = previewHandler.fileType(suffix);
+		if (contentType !== 'video' || document.body.clientWidth <= 480) {
+			document.getElementById("potplayer").style.display = "none";
+		} else {
+			document.getElementById("potplayer").style.display = "unset";
+		}
+		switch (contentType) {
+			case 'image':
+				let img = new Image();
+				img.style.maxWidth = '100%';
+				img.style.border = '4px dotted #94b4d1';
+				img.style.padding = '6px';
+				img.src = url;
+				let fancy = document.createElement('a');
+				// fancy.setAttribute('data-fancybox', 'image');
+				fancy.href = img.src;
+				fancy.target = '_blank';
+				fancy.append(img);
+				content.innerHTML = '';
+				content.append(fancy);
+				// layer.msg('低分辨率预览中, 请自行下载原图', {icon: 3, closeBtn: 2});
+				break;
+			case 'audio':
+				let audio = new Audio();
+				audio.style.outline = 'none';
+				audio.preload = 'auto';
+				audio.volume = 0.3;
+				audio.controls = true;
+				audio.style.width = '100%';
+				audio.src = url;
+				content.innerHTML = '';
+				content.append(audio);
+				break;
+			case 'video':
+				let video = document.createElement('div');
+				previewHandler.createDplayer(url, suffix, video);
+				content.innerHTML = '';
+				content.append(video);
+				break;
+			case 'text':
+				// 限制大小（有MB单位大于5M，或者有GB单位那都不渲染）
+				if ((size.indexOf(' MB') >= 0 && size.split(' ')[0] > 5) || (size.indexOf(' GB') >= 0)) {
+					content.style['text-align'] = 'center';
+					content.innerHTML = '该文件超过5MB不支持预览';
+					break;
+				} else {
+					let pre = document.createElement('pre');
+					let code = document.createElement('code');
+					pre.append(code);
+					pre.style['overflow-x'] = 'scroll';
+					pre.classList.add(suffix);
+					content.style['text-align'] = 'initial';
+					content.innerHTML = '';
+					content.append(pre);
+					loading.style.display = 'initial';
+					$.ajax({
+						type: 'GET',
+						url: url,
+						dataType:"text",
+						complete: function () {loading.style.display = 'none';},
+						success: function (data) {
+							code.textContent = data;
+							$('pre code').each(function (i, block) {
+								hljs.highlightBlock(block);
+								hljs.lineNumbersBlock(block);
+							});
+						}
+					});
+					break;
+				}
+			case 'office':
+				$.ajax({
+					type: 'POST',
+					url: "/getOfficePreviewUrl/" + fileId,
+					success: function (data) {
+						let div = document.createElement('div');
+						div.className = 'target-blank';
+						content.style['text-align'] = 'initial';
+						div.innerHTML = '点我新窗口打开';
+						div.addEventListener('click', () => window.open(data.preview_url));
+						content.innerHTML = '';
+						content.appendChild(div);
+
+						let container = document.createElement('div');
+						container.id = 'weboffice-container';
+						container.style['height'] = '80vh';
+						container.style['backgroundColor'] = '#fff';
+						container.style['boxShadow'] = '0 10px 15px -3px rgba(0, 0, 0, 0.1),0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+						content.appendChild(container);
+
+						let instance = aliyun.config({
+							mount: document.querySelector('#weboffice-container'),
+							url: data.preview_url
+						})
+						instance.setToken({token: data.access_token})
+					}
+				});
+				break;
+			case 'markdown':
+				renderMarkdown(url, false);
+				content.style['text-align'] = 'initial';
+				break;
+			default:
+				content.style['text-align'] = 'center';
+				content.innerHTML = '该文件不支持预览';
+				break;
+
+		}
+
+		let start = null;
+		let right = document.querySelector('.right');
+		const scrollToBottom = (timestamp) => {
+			if (!start) start = timestamp;
+			let progress = timestamp - start;
+			let last = right.scrollTop;
+			right.scrollTo(0, right.scrollTop + 14);
+			if (right.scrollTop !== last && progress < 1000 * 2) {
+				window.requestAnimationFrame(scrollToBottom);
+			}
+		};
+		window.requestAnimationFrame(scrollToBottom);
+	}
+
+	function dealFiles(files, fileId, isBack) {
+		if (fullFileIdArr[fullFileIdArr.length - 1] !== fileId) {
+			fullFileIdArr.push(fileId);
+		}
+		if (files.length === 1 && files[0].encrypted) {
+			switchRightDisplay("encrypted");
+			const password = document.querySelector('.password');
+			const input = password.querySelector('input');
+			input.focus();
+			const button = password.querySelector('button');
+			const buttonParent = button.parentElement;
+			const buttonClone = button.cloneNode(true);
+			buttonParent.replaceChild(buttonClone, button);
+			input.placeholder = '请输入密码';
+
+			$('.password').bind("keypress", function() {
+				if (event.keyCode === 13) {
+					buttonClone.click();
+				}
+			});
+
+			buttonClone.addEventListener('click', event => {
+				const passwd = input.value;
+				if (!input.value) {
+					layer.msg('你还没填写密码哦', {icon: 3, closeBtn: 2});
+					input.focus();
+					return;
+				}
+				input.value = '';
+				input.placeholder = '正在验证..';
+				loading.style.display = 'initial';
+				$.ajax({
+					type: 'POST',
+					url: "/getFolder/" + fileId,
+					data: {password: passwd},
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					complete: function () {loading.style.display = 'none';},
+					success: function (files) {
+						//密码错了
+						if (files != null && files.length === 1 && files[0].encrypted) {
+							input.placeholder = '请输入密码';
+							layer.msg('密码错误哦', {icon: 2, closeBtn: 2});
+							input.focus();
+						} else {
+							//密码对了
+							switchRightDisplay();
+							renderFileList(files);
+						}
+
+
+					}
+				});
+			});
+		} else {
+			switchRightDisplay();
+			renderFileList(files);
+			fullFileId = fileId;
+			if (!isBack) {
+				if (fullFileIdArr[fullFileIdArr.length - 1] !== fileId) {
+					fullFileIdArr.push(fileId);
+				}
+			}
+		}
+	}
+
+	function addTreeNodeListener(elem, fileId) {
+		elem.addEventListener('click', event => {
+			if (fileId !== null) {
+				loading.style.display = 'initial';
+				$.ajax({
+					type: 'POST',
+					url: "/getFolder/" + fileId,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					complete: function () {loading.style.display = 'none';},
+					success: function (files) {
+						dealFiles(files, fileId, false);
+						//判断是否重复添加列表元素(判断新增的文件夹只要存在同名肯定重复，抛异常)
+						try {
+							files.forEach(file => {
+								elem.parentElement.querySelectorAll('.tree-node-name').forEach(item => {
+									if (item.textContent === file.name) {
+										throw Error();
+									}
+								});
+
+								if (file.type === "folder") {
+									elem.parentElement.append(createTreeNodeWrapper(
+										'arrow-dropright',
+										'folder-open',
+										file.name,
+										file.fileId
+									));
+								}
+							});
+						} catch (e) {
+							// console.log('error : ' + e);
+						}
+					}
+				});
+			}
+		});
+	}
+
+	function addFileListLineListener(elem, fileId, size, name, url, previewUrl) {
+		if (url) {
+			elem.addEventListener('click', event => {
+				dealFile(fileId, url, size, name);
+			});
+
+			//为elem添加右键点击事件，传数据
+			if (previewUrl) {
+				elem.style['backgroundImage'] = "url('"+ previewUrl +"')";
+				elem.style['backgroundRepeat'] = "no-repeat";
+				if (document.getElementById('file-list').getAttribute("class") === 'thumbnail') {
+					elem.style['backgroundSize'] = "cover";
+				} else {
+					elem.style['backgroundSize'] = "contain";
+				}
+				elem.style['backgroundPosition'] = "center";
+			}
+			elem.setAttribute("fileId", fileId);
+			rightmenu(elem, "file");
+		} else {
+			elem.addEventListener('click', event => {
+				loading.style.display = 'initial';
+				$.ajax({
+					type: 'POST',
+					url: "/getFolder/" + fileId,
+					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					complete: function () {loading.style.display = 'none';},
+					success: function (files) {
+						dealFiles(files, fileId, false);
+					}
+				});
+			});
+			elem.setAttribute("fileId", fileId);
+			rightmenu(elem, "folder");
+		}
+	}
+
+	function switchRightDisplay(display) {
+		if (display === 'preview') {
+			document.querySelector('.list-header').style.display = 'none';
+			document.querySelector('#file-list').style.display = 'none';
+			document.querySelector('.markdown-body').style.display = 'none';
+			document.querySelector('.password').style.display = 'none';
+			document.querySelector('.preview').style.display = 'initial'
+		} else if (display === 'encrypted') {
+			document.querySelector('.list-header').style.display = 'none';
+			document.querySelector('#file-list').style.display = 'none';
+			document.querySelector('.markdown-body').style.display = 'none';
+			document.querySelector('.preview').style.display = 'none';
+			document.querySelector('.password').style.display = 'initial';
+			document.querySelector('#readme').innerHTML = '';
+			let content = document.querySelector('.preview .content');
+			if (content) {
+				document.querySelector('.preview .content').innerHTML = '';
+			}
+		} else {
+			document.querySelector('#file-list').style.display = '';
+			document.querySelector('.markdown-body').style.display = 'none'
+			document.querySelector('.preview').style.display = 'none';
+			document.querySelector('.password').style.display = 'none';
+			document.querySelector('#readme').innerHTML = '';
+			let content = document.querySelector('.preview .content');
+			if (content) {
+				document.querySelector('.preview .content').innerHTML = '';
+			}
+		}
+	}
+
+	const formatDate = date => {
+		const addZero = num => num > 9 ? num : '0' + num;
+		date = new Date(date);
+		const year = date.getFullYear();
+		const month = addZero(date.getMonth() + 1);
+		const day = addZero(date.getDate());
+		const hour = addZero(date.getHours());
+		const minute = addZero(date.getMinutes());
+		const second = addZero(date.getSeconds());
+		return 'yyyy-MM-dd HH:mm:ss'
+			.replace('yyyy', year)
+			.replace('MM', month)
+			.replace('dd', day)
+			.replace('HH', hour)
+			.replace('mm', minute)
+			.replace('ss', second);
+	};
+
+	const formatSize = size => {
+		let count = 0;
+		while (size >= 1024) {
+			size /= 1024;
+			count++;
+		}
+		size = size.toFixed(2);
+		switch (count) {
+			case 1:
+				size += ' KB';
+				break;
+			case 2:
+				size += ' MB';
+				break;
+			case 3:
+				size += ' GB';
+				break;
+			case 4:
+				size += ' TB';
+				break;
+			case 5:
+				size += ' PB';
+				break;
+			default:
+				size += ' B';
+		}
+		return size;
+	};
+
+	const createTreeNodeWrapper = (array, type, name, fileId) => {
+		//创建树节点包含图标
+		let treeNodeWrapper = document.getElementById('tree-node-wrapper-template').content.cloneNode(true);
+		let icons = treeNodeWrapper.querySelectorAll('ion-icon');
+		icons[0].setAttribute('name', array);
+		icons[1].setAttribute('name', type);
+		treeNodeWrapper.querySelector('.tree-node-name').innerText = name;
+		treeNodeWrapper.appendNode = node => treeNodeWrapper.querySelector('.tree-node-wrapper').append(node);
+		addTreeNodeListener(treeNodeWrapper.querySelector('.tree-node'), fileId);
+		return treeNodeWrapper;
+	}
+
+	function renderTreeNode(files) {
+
+		const treeRoot = document.getElementById('tree-root');
+		treeRoot.innerHTML = '';
+		files.forEach(file => {
+			if (file.type === "folder") {
+				treeRoot.append(createTreeNodeWrapper('arrow-dropright',
+					'folder',
+					file.name,
+					file.fileId
+				));
+			}
+		});
+	}
+
+	function getExtensionFileType(fileFullName) {
+		if (fileFullName.endsWith(".tar.gz")) {
+			return "compress";
+		}
+		const fileName = fileFullName.substring(fileFullName.lastIndexOf(".") + 1).toLowerCase();
+		if (fileName === fileFullName.toLowerCase()) {
+			return 'other';
+		}
+		if (['bmp', 'jpg', 'jpeg', 'png', 'svg', 'webp', 'gif', 'tiff', 'ai', 'ico'].includes(fileName)) {
+			return 'image';
+		} else if (['mp3', 'flac', 'wav', 'ogg'].includes(fileName)) {
+			return 'music';
+		} else if (['mp4', 'webm', 'avi', 'mkv', 'flv', 'm3u8', 'mov', 'rmvb', '3gp'].includes(fileName)) {
+			return 'video';
+		} else if (
+			[
+				'txt', 'js', 'json', 'css', 'htm', 'html', 'java', 'c', 'cpp',
+				'vue', 'py', 'h', 'hpp', 'gitignore', 'php', 'conf', 'ini',
+				'cmd', 'ps1', 'bat', 'sh', 'py', 'go', 'asp', 'reg', 'sql',
+				'properties', 'yml', 'xml', 'iml', 'groovy'
+			].includes(fileName)
+		) {
+			return 'code';
+		} else if (
+			[
+				'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
+				'mpp', 'rtf', 'vsd', 'vsdx', 'csv'
+			].includes(fileName)
+		) {
+			return 'pdf';
+		} else if (['md'].includes(fileName)) {
+			return 'doc';
+		} else if (['exe', 'com', 'bak', 'dll', 'bin', 'db'].includes(fileName)) {
+			return 'system';
+		} else if (['iso', 'img'].includes(fileName)) {
+			return 'iso';
+		} else if (['psd'].includes(fileName)) {
+			return 'psd';
+		} else if (['apk'].includes(fileName)) {
+			return 'apk';
+		} else if (['ipa', 'pkg', 'dmg'].includes(fileName)) {
+			return 'mac';
+		} else if (['zip', '7z', 'rar', '7-zip', 'tar.gz'].includes(fileName)) {
+			return 'compress';
+		} else {
+			return 'other';
+		}
+	}
+
+
+	function js_method_open(type, fileId) {
+		if (type === "folder") {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "/getFolder/" + fileId,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (files) {
+					renderFileList(files);
+					fullFileId = fileId;
+					fullFileIdArr.push(fileId);
+				}
+			});
+		} else {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "/getFile/" + fileId,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (file) {
+					dealFile(fileId, file.url, formatSize(file.size), file.name);
+				}
+			});
+		}
+	}
+
+	function js_method_share(type, fileId) {
+		let address;
+		if (type === "folder") {
+			address = document.location.protocol + "//" + window.location.host + "/folder/" + fileId;
+		} else if (type === "file") {
+			address = document.location.protocol + "//" + window.location.host + "/file/" + fileId;
+		}
+
+		let target = document.createElement('pre');
+		target.style.opacity = '0';
+		target.textContent = address;
+		document.body.appendChild(target);
+		try {
+			let range = document.createRange();
+			range.selectNode(target);
+			window.getSelection().removeAllRanges();
+			window.getSelection().addRange(range);
+			if (document.execCommand('copy')) {
+				document.execCommand('copy');
+				layer.msg('已复制分享链接', {icon: 1, closeBtn: 2});
+			}
+			window.getSelection().removeAllRanges();
+		} catch (e) {
+		}
+		document.body.removeChild(target);
+	}
+
+	function js_method_download(type, fileId) {
+		if (type === "file") {
+			loading.style.display = 'initial';
+			$.ajax({
+				type: 'POST',
+				url: "/getDownloadUrl/" + fileId,
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				complete: function () {loading.style.display = 'none';},
+				success: function (file) {
+					let target = document.createElement('pre');
+					target.style.opacity = '0';
+					target.textContent = file.url;
+					document.body.appendChild(target);
+					try {
+						let range = document.createRange();
+						range.selectNode(target);
+						window.getSelection().removeAllRanges();
+						window.getSelection().addRange(range);
+						if (document.execCommand('copy')) {
+							document.execCommand('copy');
+							layer.msg('已复制下载链接', {icon: 1, closeBtn: 2});
+						}
+						window.getSelection().removeAllRanges();
+					} catch (e) {
+					}
+					document.body.removeChild(target);
+					location.href = file.url;
+				}
+			});
+		}
+	}
+
+	function rightmenu(element, type) {
+		const context = document.getElementById("context");
+		element.oncontextmenu = function (env) {
+			//env 表示event事件、兼容event事件写法
+			var e = env || window.event;
+			let fileHover = document.querySelector('.file-wrapper-hover');
+			if (fileHover) {
+				fileHover.classList.remove('file-wrapper-hover');
+			}
+			element.classList.add('file-wrapper-hover');
+			let aList = context.getElementsByTagName('a')
+			for (var i = 0; i < aList.length; i++) {
+				aList[i].addEventListener('click', function () {
+					if (this.id === "open") {
+						this.href = "javascript:js_method_open(\"" + type + "\",\"" + element.getAttribute("fileId") + "\");"
+					} else if (this.id === "share") {
+						this.href = "javascript:js_method_share(\"" + type + "\",\"" + element.getAttribute("fileId") + "\");"
+					} else if (this.id === "download") {
+						this.href = "javascript:js_method_download(\"" + type + "\",\"" + element.getAttribute("fileId") + "\");"
+					}
+				});
+			}
+
+			if (type === "folder") {
+				document.getElementById("download").parentElement.style.display = "none";
+			} else {
+				document.getElementById("download").parentElement.style.display = "block";
+			}
+			context.style.display = "block";
+			var x = e.clientX;
+			var y = e.clientY;
+			var w = window.innerWidth;
+			var h = window.innerHeight;
+			context.style.left = Math.min(w - 202, x) + "px";
+			context.style.top = Math.min(h - 230, y) + "px";
+			return false;
+		};
+		document.onclick = function () {
+			context.style.display = "none";
+			let fileHover = document.querySelector('.file-wrapper-hover')
+			if (fileHover) {
+				fileHover.classList.remove('file-wrapper-hover');
+			}
+		};
+
+		$right.scroll(function () {
+			context.style.display = "none";
+		});
+	}
+</script>
+</html>
