@@ -59,7 +59,7 @@
                         }
                         ,
                         a.send(JSON.stringify(e))
-                    }(N + "api/collect", {
+                    }("api/collect", {
                         type: t,
                         payload: a
                     }, (function(t) {
