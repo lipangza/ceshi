@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="../public.css" rel="stylesheet">
+    <script crossorigin="anonymous"
+        integrity="sha512-EAKzSKex+PXC0U9OG13r1059ysjrjkJEpZoONCnZa0mBROY28iBOOxZSErUVw1LzLr2+U5PhR7zPCPKidUVJqg=="
+        src="https://lib.baomitu.com/pako/2.0.4/pako.min.js"></script>
+    <link crossorigin="anonymous"
+        integrity="sha512-tH5CEoO7QorGJK5RZrcKozo5xe0qC0UgOhjkIoqXNVe9ApFAjJRbVFzDfVvdRUSOJ5g2Pw9VzzOBguouzhLoIQ=="
+        href="https://lib.baomitu.com/material-components-web/6.0.0/material-components-web.min.css" rel="stylesheet">
+    <script crossorigin="anonymous"
+        integrity="sha512-5zCl3JhN4Fqq6+irTX1v8J+77hwL54zTbrdl2Dl8YHe+KGcuV14C01u/uWFrSg+kZgOfGMneoUySVHqEgdRaPQ=="
+        src="https://lib.baomitu.com/material-components-web/6.0.0/material-components-web.min.js"></script>
+    <link crossorigin="anonymous"
+        href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/material-design-icons/3.0.2/iconfont/material-icons.min.css"
+        rel="stylesheet">
+    <script src="../lib/base64.js"></script>
+</head>
+
+<body style="text-align: center">
+    <H4 style="padding:16px;">提前全部缓存</H4>
+    <button class="mdc-button mdc-button--raised mdc-button--leading" style="width:80%;margin:16px;" id="downBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">cloud_download</i>
+        <span class="mdc-button__label" id="downBtnLabel">全部缓存</span>
+    </button>
+    <p id="cacheStatus"></p>
+    <H4 style="padding:16px;">播放列表管理</H4>
+    <br>
+    <button class="mdc-button mdc-button--raised mdc-button--leading" style="width:80%;margin:16px;" id="saveBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">save</i>
+        <span class="mdc-button__label">保存歌单到本地</span>
+    </button>
+    <br>
+    <button class="mdc-button mdc-button--raised mdc-button--leading" style="width:80%;margin:16px;" id="importBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">open_in_browser</i>
+        <span class="mdc-button__label">从本地导入歌单</span>
+        <input type="file" style="display:none;" id="hiddenFileUploader">
+    </button>
+    <script>
+        window.mdc.autoInit();
+        window.MDCTextField = mdc.textField.MDCTextField;
+        window.MDCCheckbox = mdc.checkbox.MDCCheckbox;
+        document.querySelectorAll('.mdc-button').forEach(element => {
+            mdc.ripple.MDCRipple.attachTo(element);
+        });
+        document.querySelectorAll('.mdc-checkbox').forEach(element => {
+            new MDCCheckbox(element);
+        });
+        document.getElementById("saveBtn").addEventListener("click", () => {
+            let eleLink = document.createElement('a');
+            eleLink.download = "歌单.545";
+            eleLink.style.display = 'none';
+            eleLink.href = URL.createObjectURL(new Blob([pako.gzip(localStorage.playList)]));
+            document.body.appendChild(eleLink);
+            eleLink.click();
+            document.body.removeChild(eleLink);
+        });
+        document.getElementById("importBtn").addEventListener("click", () => {
+            document.getElementById("hiddenFileUploader").click();
+        });
+        document.getElementById("hiddenFileUploader").addEventListener("change", (e) => {
+            try {
+                let target = e.target || e.srcElement;
+                let file = target.files[0];
+                var reader = new FileReader();
+                reader.onloadend = (data) => {
+                    console.log(data)
+                    let res = data.target || data.srcElement;
+                    localStorage.playList = new TextDecoder().decode(pako.ungzip(res.result));
+                    window.parent.postMessage("close", "*");
+                }
+                reader.readAsArrayBuffer(file);
+            } catch (e) {
+                alert("导入失败:" + e.message)
+            }
+        });
+        const cdn = localStorage.preferCDN ? localStorage.preferCDN : "yuketang";
+        document.getElementById("downBtn").addEventListener("click", () => {
+            document.getElementById("downBtn").disabled = true;
+            document.getElementById("downBtnLabel").innerText = "正在缓存...";
+            const setStatus = (success, fail, total) => {
+                document.getElementById("cacheStatus").innerText = "总计" + total + "首,已缓存" + success + "首,失败" + fail + "首";
+                if ((success + fail) == total) {
+                    document.getElementById("downBtn").disabled = false;
+                    document.getElementById("downBtnLabel").innerText = "缓存完成";
+                }
+            }
+            let playList = JSON.parse(localStorage.playList);
+            let success = 0;
+            let fail = 0;
+            let total = playList.length;
+            const addFail = () => {
+                fail++;
+                setStatus(success, fail, total);
+            }
+            const addSuccess = () => {
+                success++;
+                setStatus(success, fail, total);
+            }
+            playList.forEach(async song => {
+                await (await fetch(song.url[cdn]).catch(error => {
+                    addFail();
+                })).blob().catch(error => {
+                    addFail();
+                })
+                addSuccess();
+            })
+        })
+    </script>
+</body>
+
+</html>

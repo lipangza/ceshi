@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="../public.css" rel="stylesheet">
+    <link crossorigin="anonymous"
+        integrity="sha512-tH5CEoO7QorGJK5RZrcKozo5xe0qC0UgOhjkIoqXNVe9ApFAjJRbVFzDfVvdRUSOJ5g2Pw9VzzOBguouzhLoIQ=="
+        href="https://lib.baomitu.com/material-components-web/6.0.0/material-components-web.min.css" rel="stylesheet">
+    <script crossorigin="anonymous"
+        integrity="sha512-5zCl3JhN4Fqq6+irTX1v8J+77hwL54zTbrdl2Dl8YHe+KGcuV14C01u/uWFrSg+kZgOfGMneoUySVHqEgdRaPQ=="
+        src="https://lib.baomitu.com/material-components-web/6.0.0/material-components-web.min.js"></script>
+    <link crossorigin="anonymous"
+        href="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/material-design-icons/3.0.2/iconfont/material-icons.min.css"
+        rel="stylesheet">
+</head>
+
+<body style="text-align: center">
+    <H4 style="padding:16px;">请选择你需要清理的部分</H4>
+    <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+            <input type="checkbox" class="mdc-checkbox__native-control" id="programCache" />
+            <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+            <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="programCache" id="programSize">程序缓存</label>
+    </div>
+    <br>
+    <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+            <input type="checkbox" class="mdc-checkbox__native-control" id="staticCache" />
+            <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+            <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="staticCache" id="staticSize">静态缓存</label>
+    </div>
+    <br>
+    <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+            <input type="checkbox" class="mdc-checkbox__native-control" id="musicCache" />
+            <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+            <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="musicCache" id="musicSize">音频缓存</label>
+    </div>
+    <br>
+    <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+            <input type="checkbox" class="mdc-checkbox__native-control" id="imageCache" />
+            <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+            <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="imageCache" id="imageSize">图片缓存</label>
+    </div>
+    <br>
+    <div class="mdc-form-field">
+        <div class="mdc-checkbox">
+            <input type="checkbox" class="mdc-checkbox__native-control" id="listCache" />
+            <div class="mdc-checkbox__background">
+                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                </svg>
+                <div class="mdc-checkbox__mixedmark"></div>
+            </div>
+            <div class="mdc-checkbox__ripple"></div>
+        </div>
+        <label for="listCache" id="listSize">歌单缓存</label>
+    </div>
+    <br>
+    <button class="mdc-button mdc-button--raised mdc-button--leading" style="width:80%;margin:16px;" id="cleanBtn">
+        <span class="mdc-button__ripple"></span>
+        <i class="material-icons mdc-button__icon" aria-hidden="true">delete</i>
+        <span class="mdc-button__label">清理</span>
+    </button>
+    <script>
+        window.mdc.autoInit();
+        window.MDCCheckbox = mdc.checkbox.MDCCheckbox;
+        document.querySelectorAll('.mdc-button').forEach(element => {
+            mdc.ripple.MDCRipple.attachTo(element);
+        });
+        document.querySelectorAll('.mdc-checkbox').forEach(element => {
+            new MDCCheckbox(element);
+        });
+        //https://stackoverflow.com/questions/28337027/how-can-i-get-the-size-and-or-number-of-elements-in-a-serviceworker-cache
+        const cacheSize = (c) => {
+            return c.keys().then(a => {
+                return Promise.all(
+                    a.map(req => c.match(req).then(res => res.clone().blob().then(b => b.size)))
+                ).then(a => a.reduce((acc, n) => acc + n, 0));
+            });
+        };
+        //https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+        const humanFileSize = (bytes, si = true, dp = 1) => {
+            const thresh = si ? 1000 : 1024;
+
+            if (Math.abs(bytes) < thresh) {
+                return bytes + ' B';
+            };
+
+            const units = si
+                ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+                : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+            let u = -1;
+            const r = 10 ** dp;
+
+            do {
+                bytes /= thresh;
+                ++u;
+            } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+
+            return bytes.toFixed(dp) + ' ' + units[u];
+        }
+        caches.open("StaticCache").then(c => cacheSize(c).then(size => document.getElementById("staticSize").innerText += ":" + humanFileSize(size)));
+        caches.open("ImageCache").then(c => cacheSize(c).then(size => document.getElementById("imageSize").innerText += ":" + humanFileSize(size)));
+        caches.open("MusicCache").then(c => cacheSize(c).then(size => document.getElementById("musicSize").innerText += ":" + humanFileSize(size)));
+        document.getElementById("listSize").innerText += ":" + humanFileSize(localStorage.cacheSong ? localStorage.cacheSong.length : 0);
+        (async () => {
+            let currentVersion = await (await fetch("getVersionWorker")).text();
+            if (!(currentVersion.length >= 8)) {
+                //版本号异常
+                currentVersion = false;
+            }
+            caches.open("545在线" + currentVersion).then(c => cacheSize(c).then(size => document.getElementById("programSize").innerText += ":" + humanFileSize(size)));
+        })()
+        document.getElementById("cleanBtn").addEventListener("click", async () => {
+            if (document.getElementById("programCache").checked) {
+                let currentVersion = await (await fetch("getVersionWorker")).text();
+                if (!(currentVersion.length >= 8)) {
+                    //版本号异常
+                    currentVersion = false;
+                }
+                await caches.delete("545在线" + currentVersion);
+            };
+            if (document.getElementById("staticCache").checked && confirm("静态缓存正常情况没有清除的必要，只有当页面显示异常时才建议清除\n你真的要清除静态缓存吗？")) {
+                await caches.delete("StaticCache");
+            };
+            if (document.getElementById("musicCache").checked) {
+                await caches.delete("MusicCache");
+            };
+            if (document.getElementById("imageCache").checked) {
+                await caches.delete("ImageCache");
+            };
+            if (document.getElementById("listCache").checked) {
+                localStorage.removeItem("cacheSong")
+            };
+            window.parent.postMessage("close", "*");
+        })
+    </script>
+</body>
+
+</html>
