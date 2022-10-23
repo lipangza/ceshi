@@ -1,0 +1,226 @@
+<script type="text/javascript">
+
+    class Solution {
+        i = 0;
+
+        format(board) {
+            board = this.clone(board)
+            let result = {}
+            result['fillable'] = {};
+            result['value'] = {};
+            board.forEach((line, x) => {
+                line.forEach((value, y) => {
+                    if (value === '.') {
+                        result['fillable'][x] = result['fillable'][x] || {};
+                        result['fillable'][x][y] = result['fillable'][x][y] || {};
+                        result['fillable'][x][y] = {'v': value, 'possible': this.get_possible(x, y, board)}
+                    } else {
+                        result['value'][x] = result['value'][x] || {};
+                        result['value'][x][y] = value
+                    }
+                })
+
+            })
+            return result;
+        }
+
+        get_possible(x, y, board) {
+            board = this.clone(board)
+            let possible = {1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9'};
+            //console.log('===')
+            //this.P(board);
+            board = this.clone(board);
+            Object.keys(board).forEach(x1 => {
+                let line = board[x1];
+                Object.keys(line).forEach(y1 => {
+                    let value = line[y1];
+                    if (value !== '.' && this.is_neighbor(x - 0, y - 0, x1 - 0, y1 - 0)) {
+                        //console.log("----", x1, y1);
+                        delete (possible[value - 0])
+                    }
+                })
+            })
+            //console.log(possible);
+            return possible;
+        }
+
+        is_neighbor(x, y, x1, y1) {
+            let minX = parseInt(x / 3) * 3;
+            let minY = parseInt(y / 3) * 3;
+            return x === x1 || y === y1 || (x1 >= minX && x1 <= minX + 2 && y1 >= minY && y1 <= minY + 2);
+        }
+
+        solveSudoku(board) {
+            board = this.clone(board);
+            let result = this.solve(this.format(board));
+            for (let x = 0; x < 9; x++) {
+                for (let y = 0; y < 9; y++) {
+                    if (result['value'][x][y] === undefined) {
+                        /*console.log('未解答成功')
+                        return [];*/
+                    }
+                    board[x][y] = result['value'][x][y] === undefined ? 0 : result['value'][x][y];
+                }
+            }
+            return board;
+        }
+
+
+        solve(format_board, last_arr = []) {
+            last_arr = this.clone(last_arr)
+            format_board = this.clone(format_board)
+            this.i++;
+            let item = this.get_item(format_board, last_arr);
+            if (this.i === 120) {
+                return;
+                //return format_board;
+            }
+
+            if (Object.values(item).length > 0) {
+                delete (format_board['fillable'][item['x']][item['y']]);
+                let possibleItem = item['possible'];
+                Object.values(possibleItem).forEach(value => {
+                    format_board['value'][item['x']] = format_board['value'][item['x']] || {};
+                    format_board['value'][item['x']][item['y']] = value
+                    last_arr = [item['x'], item['y']];
+
+                    let result = this.solve(format_board, last_arr)
+
+
+                    if (Object.values(result).length > 0) {
+                        return result;
+                    }
+                })
+                return [];
+            }
+            return format_board;
+        }
+
+
+        get_item(format_board, last_arr = []) {
+            last_arr = this.clone(last_arr)
+            let result = {};
+            last_arr.push([])
+
+
+            while (1) {
+                let last = last_arr.pop();
+                if (last === undefined) {
+                    break;
+                }
+                //console.log(last)
+                result = {};
+                for (let x in format_board['fillable']) {
+                    let line = format_board['fillable'][x];
+                    for (let y in line) {
+                        let item = line[y];
+                        if (last.length > 0 && this.is_neighbor(last[0], last[1], x, y)) {
+                            item['possible'] = this.get_possible(x, y, format_board['value']);
+                        }
+                        let cnt = Object.keys(item['possible']).length;
+                        //console.log("cnt---"+cnt);
+                        //console.log(item['possible']);
+                        //console.log(cnt);
+                        if (cnt <= 0) {
+                            return {'x': x, 'y': y, 'possible': {}}
+                        } else if (cnt === 1) {
+                            delete (format_board['fillable'][x][y]);
+                            //console.log(x,y,format_board);
+                            format_board['value'][x] = format_board['value'][x] || {};
+                            format_board['value'][x][y] = Object.values(item['possible'])[0];
+                            last_arr.push([x, y]);
+
+                        } else {
+                            //console.log("fuck");
+                            //console.log(cnt,result)
+                            if (Object.values(result).length === 0 || cnt < ((Object.values(result['possible'])).length)) {
+                                //console.log("apple");
+                                result = {'x': x, 'y': y, 'possible': item['possible']};
+                                //console.log(result);
+
+
+                            }
+                            //console.log(result);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        clone(Obj) {
+            let buf;
+            if (Obj instanceof Array) {
+                buf = [];
+                var i = Obj.length;
+                while (i--) {
+                    buf[i] = this.clone(Obj[i]);
+                }
+                return buf;
+            } else if (Obj instanceof Object) {
+                buf = {};
+                for (let k in Obj) {
+                    buf[k] = this.clone(Obj[k]);
+                }
+                return buf;
+            } else {
+                return Obj;
+            }
+        }
+
+        P(data) {
+            data = this.clone(data);
+            let s = '';
+            Object.keys(data).forEach(x1 => {
+                s = ''
+                let line = data[x1];
+                Object.keys(line).forEach(y1 => {
+                    let value = line[y1];
+                    if (value == '.') value = 0;
+                    s = s + value;
+                })
+                console.log(s);
+            })
+            //console.log("")
+        }
+    }
+
+    board = [["5", "3", ".", ".", "7", ".", ".", ".", "."], ["6", ".", ".", "1", "9", "5", ".", ".", "."], [".", "9", "8", ".", ".", ".", ".", "6", "."], ["8", ".", ".", ".", "6", ".", ".", ".", "3"], ["4", ".", ".", "8", ".", "3", ".", ".", "1"], ["7", ".", ".", ".", "2", ".", ".", ".", "6"], [".", "6", ".", ".", ".", ".", "2", "8", "."], [".", ".", ".", "4", "1", "9", ".", ".", "5"], [".", ".", ".", ".", "8", ".", ".", "7", "9"]];
+    //board = [["5", "3", ".", ".", "7", ".", ".", ".", "."], ["6", "7", "2", "1", "9", "5", "3", "4", "8"], [".", "9", "8", ".", ".", ".", ".", "6", "."], ["8", ".", ".", ".", "6", ".", ".", ".", "3"], ["4", ".", ".", "8", ".", "3", ".", ".", "1"], ["7", ".", ".", ".", "2", ".", ".", ".", "6"], [".", "6", ".", ".", ".", ".", "2", "8", "."], [".", ".", ".", "4", "1", "9", ".", ".", "5"], [".", ".", ".", ".", "8", ".", ".", "7", "9"]];
+    //board = [["5", "3", ".", ".", "7", ".", ".", ".", "."], ["6", ".", ".", "1", "9", "5", ".", ".", "."], [".", "9", "8", ".", ".", ".", ".", "6", "."], ["8", ".", ".", ".", "6", ".", ".", ".", "3"], ["4", ".", ".", "8", ".", "3", ".", ".", "1"], ["7", ".", ".", ".", "2", ".", ".", ".", "6"], [".", "6", ".", ".", ".", ".", "2", "8", "."], [".", ".", ".", "4", "1", "9", ".", ".", "5"], [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
+
+    //board = [["5","3",".",".","7",".",".",".","."],["6",".",".","1","9","5",".",".","."],[".","9","8",".",".",".",".","6","."],["8",".",".",".","6",".",".",".","3"],["4",".",".","8",".","3",".",".","1"],["7",".",".",".","2",".",".",".","6"],[".","6",".",".",".",".","2","8","."],[".",".",".","4","1","9",".",".","5"],[".",".",".",".","8",".",".","7","9"]];
+
+    //console.log(board);
+
+    board2 = [[".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", ".", "."]];
+
+    board3 = [
+        ['8', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '3', '6', '.', '.', '.', '.', '.'],
+        ['.', '7', '.', '.', '9', '.', '2', '.', '.'],
+
+        ['.', '5', '.', '.', '.', '7', '.', '.', '.'],
+        ['.', '.', '.', '.', '4', '5', '7', '.', '.'],
+        ['.', '.', '.', '1', '.', '.', '.', '3', '.'],
+
+        ['.', '.', '1', '.', '.', '.', '.', '6', '8'],
+        ['.', '.', '8', '5', '.', '.', '.', '1', '.'],
+        ['.', '9', '.', '.', '.', '.', '4', '.', '.']];
+
+    Solution = new Solution();
+    let re = Solution.solveSudoku(board);
+    console.log(Solution.i)
+    Solution.P(re);
+
+    // Solution.solveSudoku();
+    //let a = Solution.get_possible();
+    //console.log(a);
+
+
+    //Solution.x = 2;
+    //Solution.y = 3;
+    // alert( Solution.solveSudoku());
+
+
+</script>

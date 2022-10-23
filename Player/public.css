@@ -1,0 +1,73 @@
+::-webkit-scrollbar {
+    height: 12px;
+    width: 8px;
+    background: transparent;
+    z-index: 12;
+    overflow: visible;
+}
+
+::-webkit-scrollbar-thumb {
+    width: 10px;
+    background-color: #FADCBB;
+    z-index: 12;
+    border: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    transition: background-color .32s ease-in-out;
+    margin: 4px;
+    min-height: 32px;
+    min-width: 32px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #FADCBB;
+}
+
+::-webkit-scrollbar-corner {
+    background: #202020;
+}
+
+a {
+    color: darkorange;
+    text-decoration: none !important;
+}
+
+li {
+    user-select: all !important;
+}
+
+* {
+    cursor: url('./cursor/normal.png'), default !important;
+    scrollbar-width: thin;
+    scrollbar-color: #FADCBB transparent;
+    --mdc-theme-primary: #DCAC89;
+    --mdc-theme-secondary: #FADCBB;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.mdc-card {
+    margin: 20px;
+}
+
+.card-title {
+    background-color: rgba(219, 199, 251, .5);
+    padding: 3px;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbar {
+    position: fixed;
+    width: 100vw;
+    top: 0px;
+    backdrop-filter: blur(10px) brightness(100%);
+    -webkit-backdrop-filter: blur(10px) brightness(100%);
+    background-color: rgba(255, 255, 255, 0.75);
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+}

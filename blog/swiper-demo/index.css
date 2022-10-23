@@ -1,0 +1,35 @@
+*{padding: 0;margin: 0}
+body{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+.window{
+    width: 330px;
+    height: 414px;
+    border: 10px solid #dedede;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.imgBox{
+    position: relative;
+}
+.imgBox>img{
+    position: absolute;
+    top: 0;
+    transition: all .3s;
+}
+.imgBox>img.center{
+    left: 0;
+    transform: translateX(0);
+    z-index: 1;
+}
+.imgBox>img.before{
+    transform: translateX(100%);
+}
+.imgBox>img.after{
+    transform: translateX(-100%);
+}
